@@ -287,3 +287,12 @@ function prevSlide() {
   currentSlide = (currentSlide - 1 + cards.length) % cards.length;
   showSlide(currentSlide);
 }
+
+// ============ SECTION TOGGLE ============ //
+function showSection(sectionId) {
+  const sections = document.querySelectorAll('main > section');
+  sections.forEach(sec => sec.style.display = 'none');
+
+  const target = document.getElementById(sectionId);
+  if (target) target.style.display = 'block';
+}
