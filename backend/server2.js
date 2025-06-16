@@ -2,7 +2,7 @@
 const express  = require('express');
 const cors     = require('cors');
 const mongoose = require('mongoose');
-const path     = require('path');             // NEW
+const path     = require('path');
 require('dotenv').config();
 
 /* ----------  App init ---------- */
@@ -20,9 +20,9 @@ const PORT = process.env.PORT || 5000;
 /* ----------  Middleware ---------- */
 app.use(cors({
   origin: [
-    'http://localhost:5500',           // dev served directly
+    'http://localhost:5500',
     'http://127.0.0.1:5500',
-    process.env.FRONTEND_URL || ''     // add your Render static URL later
+    process.env.FRONTEND_URL || ''
   ],
   credentials: true
 }));
@@ -32,11 +32,10 @@ app.use(express.json());
 const frontendDir = path.join(__dirname, '../frontend');
 app.use(express.static(frontendDir));
 
-/* Optional: Single‑page fallback  */
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api/')) return next();               // keep API routes
-  res.sendFile(path.join(frontendDir, 'index2.html'));
-});
+/* ----------  SPA fallback (exclude /api/*) ---------- */
+app.get(/^\/(?!api\/).*/, (_req, res) =>
+  res.sendFile(path.join(frontendDir, 'index2.html'))
+);
 
 /* ----------  DB ---------- */
 mongoose.connect(process.env.MONGO_URI, {
@@ -52,7 +51,7 @@ const newsRoutes             = require('./news');
 app.use('/api/auth', authRoutes);
 app.use('/api/news', newsRoutes);
 
-/* ----------  Root (health check) ---------- */
+/* ----------  Health check ---------- */
 app.get('/api', (_req, res) => res.send('📰 News API up & running'));
 
 /* ----------  Central error handler ---------- */
@@ -63,10 +62,10 @@ app.use((err, _req, res, _next) => {
 
 /* ----------  Start ---------- */
 app.listen(PORT, () =>
-  console.log(`🚀 Server listening on http://localhost:${PORT}`)
+  console.log(`🚀  Server listening on http://localhost:${PORT}`)
 );
 
 process.on('unhandledRejection', (err) => {
-  console.error('❗ Unhandled rejection', err);
+  console.error('❗ Unhandled rejection:', err);
   process.exit(1);
 });
