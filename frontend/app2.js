@@ -52,14 +52,24 @@ function toggleSearch() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loginBtn').addEventListener('click', toggleAuth);
   document.getElementById('logoutBtn').addEventListener('click', logout);
+  document.getElementById('close-auth').addEventListener('click', closeAuth);
+
   document.querySelector('#loginForm button').addEventListener('click', login);
   document.querySelector('#signupForm button').addEventListener('click', signup);
-  document.querySelector('#search-section button').addEventListener('click', searchNews);
 
-  document.getElementById('close-auth').addEventListener('click', closeAuth);
+  document.getElementById('searchButton').addEventListener('click', searchNews);
+  document.getElementById('toggleSearchBtn')?.addEventListener('click', toggleSearch);
 
   document.getElementById('nextSlideBtn')?.addEventListener('click', nextSlide);
   document.getElementById('prevSlideBtn')?.addEventListener('click', prevSlide);
+
+  // ENTER KEY SUBMIT
+  document.getElementById('loginForm').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+  document.getElementById('signupForm').addEventListener('keydown', e => {
+    if (e.key === 'Enter') signup();
+  });
 
   updateAuthUI();
   fetchHeadlines();
@@ -67,15 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateAuthUI() {
-  if (token) {
-    document.getElementById('loginBtn').style.display = 'none';
-    document.getElementById('logoutBtn').style.display = 'inline-block';
-    document.getElementById('searchButton').disabled = false;
-  } else {
-    document.getElementById('loginBtn').style.display = 'inline-block';
-    document.getElementById('logoutBtn').style.display = 'none';
-    document.getElementById('searchButton').disabled = true;
-  }
+  const isLoggedIn = !!token;
+  document.getElementById('loginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+  document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+  document.getElementById('searchButton').disabled = !isLoggedIn;
 }
 
 // ============ AUTH ============ //
