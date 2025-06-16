@@ -96,7 +96,7 @@
     }
 
     /* MESSAGE BAR */
-    #messageBar {
+    #message-bar {
       position: fixed;
       top: 20px;
       left: 50%;
@@ -111,8 +111,8 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
-    #messageBar.error { background-color: #e74c3c; }
-    #messageBar.success { background-color: #2ecc71; }
+    #message-bar.error { background-color: #e74c3c; }
+    #message-bar.success { background-color: #2ecc71; }
   </style>
 </head>
 <body>
@@ -129,7 +129,7 @@
       <ul>
         <li onclick="showSection('headline-section')">HEADLINES</li>
         <li onclick="toggleSearch()">SEARCH</li>
-        <li onclick="showSection('history-section'); getHistory();">HISTORY</li>
+        <li onclick="getHistory()">HISTORY</li>
       </ul>
     </nav>
   </header>
@@ -139,8 +139,8 @@
     <section id="headline-section">
       <h2>Top Headlines</h2>
       <div class="carousel" id="headlines-carousel"></div>
-      <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
-      <button class="carousel-btn next" onclick="nextSlide()">❯</button>
+      <button class="carousel-btn prev" id="prevSlideBtn">❮</button>
+      <button class="carousel-btn next" id="nextSlideBtn">❯</button>
     </section>
 
     <!-- Search Section -->
@@ -152,7 +152,7 @@
     </section>
 
     <!-- History Section -->
-    <section id="history-section" style="display: none;">
+    <section id="history-section">
       <h2>🔖 Your Search History</h2>
       <ul id="history-list"></ul>
       <button class="back-btn" onclick="showSection('headline-section')">⬅ Back</button>
@@ -161,7 +161,7 @@
     <!-- Auth Overlay -->
     <div id="auth-overlay" onclick="closeAuth()"></div>
     <section id="auth-section">
-      <div class="close-auth" onclick="closeAuth()">✖</div>
+      <div class="close-auth" id="close-auth">✖</div>
       <div id="loginForm">
         <h3>Login</h3>
         <input type="email" id="loginEmail" placeholder="Email" />
@@ -178,42 +178,8 @@
   </main>
 
   <!-- Message Bar -->
-  <div id="messageBar"></div>
+  <div id="message-bar"></div>
 
   <script src="app2.js"></script>
-  <script>
-    function showSection(sectionId) {
-      ['headline-section', 'search-section', 'history-section'].forEach(id => {
-        document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const loginBtn = document.querySelector('#loginForm button');
-      const signupBtn = document.querySelector('#signupForm button');
-
-      if (loginBtn) loginBtn.addEventListener('click', login);
-      if (signupBtn) signupBtn.addEventListener('click', signup);
-
-      document.getElementById('logoutBtn').addEventListener('click', logout);
-      document.getElementById('loginBtn').addEventListener('click', toggleAuth);
-      document.getElementById('searchButton').addEventListener('click', searchNews);
-
-      document.getElementById('loginForm').addEventListener('keydown', e => {
-        if (e.key === 'Enter') login();
-      });
-
-      document.getElementById('signupForm').addEventListener('keydown', e => {
-        if (e.key === 'Enter') signup();
-      });
-
-      if (typeof fetchHeadlines === "function") fetchHeadlines();
-
-      const token = localStorage.getItem("token");
-      document.getElementById("searchButton").disabled = !token;
-
-      if (typeof updateAuthUI === "function") updateAuthUI();
-    });
-  </script>
 </body>
 </html>

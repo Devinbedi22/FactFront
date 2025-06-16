@@ -71,11 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') signup();
   });
 
+  // 👇 Load history when history section/tab is shown
+  document.getElementById('history-tab')?.addEventListener('click', () => {
+    if (token) getHistory();
+  });
+
   updateAuthUI();
   fetchHeadlines();
-  if (token) getHistory();
 });
 
+// ============ AUTH ============ //
 function updateAuthUI() {
   const isLoggedIn = !!token;
   document.getElementById('loginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
@@ -83,7 +88,6 @@ function updateAuthUI() {
   document.getElementById('searchButton').disabled = !isLoggedIn;
 }
 
-// ============ AUTH ============ //
 async function login() {
   const username = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
@@ -104,7 +108,6 @@ async function login() {
       updateAuthUI();
       closeAuth();
       showMessage('Logged in successfully!');
-      getHistory();
     } else {
       showMessage(data.error || 'Login failed', 'error');
     }
@@ -143,6 +146,7 @@ function logout() {
   updateAuthUI();
   showMessage('Logged out!');
   document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('history-list').innerHTML = '';
 }
 
 // ============ NEWS ============ //
@@ -176,8 +180,6 @@ async function searchNews() {
 }
 
 async function getHistory() {
-  if (!token) return;
-
   try {
     const res = await fetch(`${BASE_URL}/news/history`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -186,14 +188,7 @@ async function getHistory() {
     const data = await res.json();
     if (!res.ok) return showMessage(data.error || 'Failed to fetch history', 'error');
 
-    displayArticles(
-      data.map(h => ({
-        title: `🔍 ${h.query}`,
-        description: new Date(h.date).toLocaleString(),
-        url: '#',
-      })),
-      'searchResults'
-    );
+    displayHistory(data);
   } catch (err) {
     showMessage('Failed to load history.', 'error');
   }
@@ -217,6 +212,26 @@ function displayArticles(articles, elementId) {
         <p>${article.description || ''}</p>
         ${article.url !== '#' ? `<a href="${article.url}" target="_blank">Read more</a>` : ''}
       </div>`
+    )
+    .join('');
+}
+
+function displayHistory(historyArray) {
+  const container = document.getElementById('history-list');
+  if (!container) return;
+
+  if (!historyArray || historyArray.length === 0) {
+    container.innerHTML = '<li>No history found.</li>';
+    return;
+  }
+
+  container.innerHTML = historyArray
+    .map(
+      item => `
+      <li class="history-card">
+        <span>🔍 ${item.query}</span>
+        <small>${new Date(item.date).toLocaleString()}</small>
+      </li>`
     )
     .join('');
 }
