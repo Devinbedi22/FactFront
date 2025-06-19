@@ -22,11 +22,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 /* ---------- Middleware ---------- */
 app.use(cors({
-  origin: isProduction
-    ? 'https://factfront.onrender.com'
-    : ['http://localhost:5500', 'http://127.0.0.1:5500'],
+  origin: 'https://factfront.onrender.com',
   credentials: true
 }));
+
 
 app.use(express.json());
 
