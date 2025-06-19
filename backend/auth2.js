@@ -52,6 +52,7 @@ router.post('/login', async (req, res, next) => {
 
     // ✅ Store user ID in session
     req.session.userId = user._id;
+    console.log('✅ Session after login:', req.session); // 🪵 Debug log
 
     res.json({ message: 'Login successful' });
   } catch (err) {
@@ -71,6 +72,7 @@ router.post('/logout', (req, res) => {
 
 /* ---------- /status ---------- */
 router.get('/status', (req, res) => {
+  console.log('🔍 Session on /status:', req.session); // 🪵 Debug log
   res.json({ loggedIn: !!req.session.userId });
 });
 

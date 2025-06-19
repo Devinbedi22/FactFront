@@ -10,6 +10,7 @@ require('dotenv').config();
 /* ---------- App init ---------- */
 const app  = express();
 const PORT = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === 'production';
 
 /* ---------- Required env check ---------- */
 ['MONGO_URI', 'NEWS_API_KEY', 'SESSION_SECRET'].forEach((key) => {
@@ -43,8 +44,8 @@ app.use(session({
   cookie: {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 2, // 2 hours
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production' // use secure cookies in production
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction       // must be true if sameSite: 'none'
   }
 }));
 
