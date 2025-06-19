@@ -73,7 +73,6 @@
       margin-bottom: 10px;
       padding: 12px 15px;
       border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -129,7 +128,7 @@
       <ul>
         <li onclick="showSection('headline-section')">HEADLINES</li>
         <li onclick="toggleSearch()">SEARCH</li>
-        <li onclick="getHistory()">HISTORY</li>
+        <li onclick="showHistory()">HISTORY</li>
       </ul>
     </nav>
   </header>
@@ -152,7 +151,7 @@
     </section>
 
     <!-- History Section -->
-    <section id="history-section">
+    <section id="history-section" style="display: none;">
       <h2>🔖 Your Search History</h2>
       <ul id="history-list"></ul>
       <button class="back-btn" onclick="showSection('headline-section')">⬅ Back</button>
@@ -177,7 +176,6 @@
     </section>
   </main>
 
-  <!-- Message Bar -->
   <div id="message-bar"></div>
 
   <script src="app2.js"></script>

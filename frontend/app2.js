@@ -1,4 +1,4 @@
-const BASE_URL = 'https://factfront.onrender.com/api'; 
+const BASE_URL = 'https://factfront.onrender.com/api';
 let token = localStorage.getItem('token');
 
 // ============ MESSAGE BAR ============ //
@@ -44,8 +44,12 @@ function closeAuth() {
 }
 
 function toggleSearch() {
-  const section = document.getElementById('search-section');
-  section.style.display = section.style.display === 'block' ? 'none' : 'block';
+  showSection('search-section');
+}
+
+function showHistory() {
+  showSection('history-section');
+  getHistory();
 }
 
 // ============ INIT ============ //
@@ -58,22 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#signupForm button').addEventListener('click', signup);
 
   document.getElementById('searchButton').addEventListener('click', searchNews);
-  document.getElementById('toggleSearchBtn')?.addEventListener('click', toggleSearch);
 
   document.getElementById('nextSlideBtn')?.addEventListener('click', nextSlide);
   document.getElementById('prevSlideBtn')?.addEventListener('click', prevSlide);
 
-  // ENTER KEY SUBMIT
   document.getElementById('loginForm').addEventListener('keydown', e => {
     if (e.key === 'Enter') login();
   });
+
   document.getElementById('signupForm').addEventListener('keydown', e => {
     if (e.key === 'Enter') signup();
-  });
-
-  // 👇 Load history when history section/tab is shown
-  document.getElementById('history-tab')?.addEventListener('click', () => {
-    if (token) getHistory();
   });
 
   updateAuthUI();
@@ -207,11 +205,11 @@ function displayArticles(articles, elementId) {
   container.innerHTML = articles
     .map(
       article => `
-      <div class="article">
-        <h4>${article.title}</h4>
-        <p>${article.description || ''}</p>
-        ${article.url !== '#' ? `<a href="${article.url}" target="_blank">Read more</a>` : ''}
-      </div>`
+        <div class="article">
+          <h4>${article.title}</h4>
+          <p>${article.description || ''}</p>
+          ${article.url !== '#' ? `<a href="${article.url}" target="_blank">Read more</a>` : ''}
+        </div>`
     )
     .join('');
 }
@@ -228,10 +226,10 @@ function displayHistory(historyArray) {
   container.innerHTML = historyArray
     .map(
       item => `
-      <li class="history-card">
-        <span>🔍 ${item.query}</span>
-        <small>${new Date(item.date).toLocaleString()}</small>
-      </li>`
+        <li class="history-card">
+          <span>🔍 ${item.query}</span>
+          <small>${new Date(item.date).toLocaleString()}</small>
+        </li>`
     )
     .join('');
 }
