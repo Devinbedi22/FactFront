@@ -38,14 +38,17 @@ router.post('/signup', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   try {
     const { username = '', password = '' } = req.body;
+
     if (!username || !password)
       return res.status(400).json({ error: 'Username & password are required' });
 
     const user = await User.findOne({ username });
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!user)
+      return res.status(401).json({ error: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!isMatch)
+      return res.status(401).json({ error: 'Invalid credentials' });
 
     // ✅ Store user ID in session
     req.session.userId = user._id;
@@ -64,6 +67,11 @@ router.post('/logout', (req, res) => {
     res.clearCookie('sid'); // default session cookie name
     res.json({ message: 'Logged out successfully' });
   });
+});
+
+/* ---------- /status ---------- */
+router.get('/status', (req, res) => {
+  res.json({ loggedIn: !!req.session.userId });
 });
 
 module.exports = { router, User };
