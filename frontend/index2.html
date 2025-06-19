@@ -7,22 +7,17 @@
   <link rel="stylesheet" href="stylee2.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    /* AUTH & OVERLAY */
     #auth-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
+      top: 0; left: 0;
+      height: 100%; width: 100%;
       background-color: rgba(0, 0, 0, 0.6);
-      z-index: 1500;
-      display: none;
+      z-index: 1500; display: none;
     }
 
     #auth-section {
       position: fixed;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       background-color: white;
       padding: 30px;
@@ -30,8 +25,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       z-index: 2000;
       display: none;
-      width: 90%;
-      max-width: 400px;
+      width: 90%; max-width: 400px;
     }
 
     #auth-section input {
@@ -55,7 +49,6 @@
       color: #555;
     }
 
-    /* HISTORY SECTION */
     #history-section {
       display: none;
       padding: 20px;
@@ -67,16 +60,17 @@
     }
 
     .history-card {
-      background: #f9f9f9;
+      background: #ffffff;
       border: 1px solid #ddd;
-      border-left: 5px solid #3498db;
-      margin-bottom: 10px;
-      padding: 12px 15px;
+      border-left: 5px solid #2980b9;
+      margin-bottom: 12px;
+      padding: 14px 18px;
       border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.05);
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+      font-family: 'Segoe UI', sans-serif;
     }
 
     .history-card small {
@@ -85,7 +79,7 @@
     }
 
     .back-btn {
-      margin-top: 10px;
+      margin-top: 15px;
       background: #2c3e50;
       color: white;
       padding: 8px 16px;
@@ -94,7 +88,6 @@
       cursor: pointer;
     }
 
-    /* MESSAGE BAR */
     #message-bar {
       position: fixed;
       top: 20px;
@@ -152,7 +145,7 @@
 
     <!-- History Section -->
     <section id="history-section" style="display: none;">
-      <h2>🔖 Your Search History</h2>
+      <h2>📌 Your Search History</h2>
       <ul id="history-list"></ul>
       <button class="back-btn" onclick="showSection('headline-section')">⬅ Back</button>
     </section>

@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#signupForm button').addEventListener('click', signup);
 
   document.getElementById('searchButton').addEventListener('click', searchNews);
-
-  document.getElementById('nextSlideBtn')?.addEventListener('click', nextSlide);
-  document.getElementById('prevSlideBtn')?.addEventListener('click', prevSlide);
+  document.getElementById('searchQuery').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') searchNews();
+  });
 
   document.getElementById('loginForm').addEventListener('keydown', e => {
     if (e.key === 'Enter') login();
@@ -73,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('signupForm').addEventListener('keydown', e => {
     if (e.key === 'Enter') signup();
   });
+
+  document.getElementById('nextSlideBtn')?.addEventListener('click', nextSlide);
+  document.getElementById('prevSlideBtn')?.addEventListener('click', prevSlide);
 
   updateAuthUI();
   fetchHeadlines();
@@ -227,8 +230,10 @@ function displayHistory(historyArray) {
     .map(
       item => `
         <li class="history-card">
-          <span>🔍 ${item.query}</span>
-          <small>${new Date(item.date).toLocaleString()}</small>
+          <div>
+            <strong>${item.query}</strong><br />
+            <small>${new Date(item.date).toLocaleString()}</small>
+          </div>
         </li>`
     )
     .join('');

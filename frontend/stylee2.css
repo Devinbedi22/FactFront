@@ -1,3 +1,4 @@
+/* Reset & Base */
 * {
   margin: 0;
   padding: 0;
@@ -143,27 +144,23 @@ section h2 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.carousel-item {
+.carousel-card {
   display: none;
   text-align: center;
   padding: 20px;
   transition: all 0.5s ease;
 }
 
-.carousel-item.active {
-  display: block;
-}
-
-.carousel-item h3 {
+.carousel-card h3 {
   margin: 10px 0;
   font-size: 20px;
 }
 
-.carousel-item p {
+.carousel-card p {
   font-size: 16px;
 }
 
-.carousel-item a {
+.carousel-card a {
   color: #007bff;
   text-decoration: none;
 }
@@ -353,7 +350,7 @@ section h2 {
     height: auto;
   }
 
-  .carousel-item {
+  .carousel-card {
     font-size: 14px;
   }
 
