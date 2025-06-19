@@ -1,24 +1,19 @@
 // backend/auth2.js
 const express = require('express');
-const bcrypt  = require('bcrypt');
-const jwt     = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
 const router = express.Router();
 
-/* ----------  User model ---------- */
+/* ---------- User model ---------- */
 const userSchema = new mongoose.Schema({
-  username : { type: String, required: true, unique: true, trim: true, minlength: 3 },
-  password : { type: String, required: true }
+  username: { type: String, required: true, unique: true, trim: true, minlength: 3 },
+  password: { type: String, required: true }
 });
 const User = mongoose.model('User', userSchema);
 
-/* ----------  Helpers ---------- */
-const issueToken = (userId) =>
-  jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '2h' });
-
-/* ----------  /signup ---------- */
+/* ---------- /signup ---------- */
 router.post('/signup', async (req, res, next) => {
   try {
     const { username = '', password = '' } = req.body;
@@ -39,7 +34,7 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-/* ----------  /login ---------- */
+/* ---------- /login ---------- */
 router.post('/login', async (req, res, next) => {
   try {
     const { username = '', password = '' } = req.body;
@@ -49,13 +44,26 @@ router.post('/login', async (req, res, next) => {
     const user = await User.findOne({ username });
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-    const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
 
-    res.json({ token: issueToken(user._id) });
+    // ✅ Store user ID in session
+    req.session.userId = user._id;
+
+    res.json({ message: 'Login successful' });
   } catch (err) {
     next(err);
   }
+});
+
+/* ---------- /logout ---------- */
+router.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ error: 'Logout failed' });
+
+    res.clearCookie('sid'); // default session cookie name
+    res.json({ message: 'Logged out successfully' });
+  });
 });
 
 module.exports = { router, User };
