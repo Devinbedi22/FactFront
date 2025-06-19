@@ -149,26 +149,27 @@
       <ul id="history-list"></ul>
       <button class="back-btn" onclick="showSection('headline-section')">⬅ Back</button>
     </section>
-
-    <!-- Auth Overlay -->
-    <div id="auth-overlay" onclick="closeAuth()"></div>
-    <section id="auth-section">
-      <div class="close-auth" id="close-auth">✖</div>
-      <div id="loginForm">
-        <h3>Login</h3>
-        <input type="email" id="loginEmail" placeholder="Email" />
-        <input type="password" id="loginPassword" placeholder="Password" />
-        <button type="button">Login</button>
-      </div>
-      <div id="signupForm">
-        <h3>Sign Up</h3>
-        <input type="email" id="signupEmail" placeholder="Email" />
-        <input type="password" id="signupPassword" placeholder="Password" />
-        <button type="button">Signup</button>
-      </div>
-    </section>
   </main>
 
+  <!-- Auth Modal -->
+  <div id="auth-overlay" onclick="closeAuth()"></div>
+  <section id="auth-section">
+    <div class="close-auth" id="close-auth">✖</div>
+    <div id="loginForm">
+      <h3>Login</h3>
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button type="button">Login</button>
+    </div>
+    <div id="signupForm">
+      <h3>Sign Up</h3>
+      <input type="email" id="signupEmail" placeholder="Email" />
+      <input type="password" id="signupPassword" placeholder="Password" />
+      <button type="button">Signup</button>
+    </div>
+  </section>
+
+  <!-- Message Bar (also handled dynamically in JS) -->
   <div id="message-bar"></div>
 
   <!-- JS -->
