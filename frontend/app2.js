@@ -1,5 +1,4 @@
 const BASE_URL = 'https://factfront.onrender.com/api';
-let token = localStorage.getItem('token');
 
 // ============ MESSAGE BAR ============ //
 const messageBar = document.createElement('div');
@@ -82,11 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============ AUTH ============ //
-function updateAuthUI() {
-  const isLoggedIn = !!token;
-  document.getElementById('loginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
-  document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
-  document.getElementById('searchButton').disabled = !isLoggedIn;
+async function updateAuthUI() {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/status`, {
+      credentials: 'include'
+    });
+    const data = await res.json();
+
+    const isLoggedIn = res.ok && data.loggedIn;
+    document.getElementById('loginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+    document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('searchButton').disabled = !isLoggedIn;
+  } catch (err) {
+    console.error('Status check failed', err);
+  }
 }
 
 async function login() {
@@ -99,13 +107,12 @@ async function login() {
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      credentials: 'include',
+      body: JSON.stringify({ username, password })
     });
 
     const data = await res.json();
     if (res.ok) {
-      token = data.token;
-      localStorage.setItem('token', token);
       updateAuthUI();
       closeAuth();
       showMessage('Logged in successfully!');
@@ -127,7 +134,8 @@ async function signup() {
     const res = await fetch(`${BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      credentials: 'include',
+      body: JSON.stringify({ username, password })
     });
 
     const data = await res.json();
@@ -141,13 +149,25 @@ async function signup() {
   }
 }
 
-function logout() {
-  localStorage.removeItem('token');
-  token = null;
-  updateAuthUI();
-  showMessage('Logged out!');
-  document.getElementById('searchResults').innerHTML = '';
-  document.getElementById('history-list').innerHTML = '';
+async function logout() {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      updateAuthUI();
+      showMessage('Logged out!');
+      document.getElementById('searchResults').innerHTML = '';
+      document.getElementById('history-list').innerHTML = '';
+    } else {
+      showMessage(data.error || 'Logout failed', 'error');
+    }
+  } catch (err) {
+    showMessage('Logout request failed.', 'error');
+  }
 }
 
 // ============ NEWS ============ //
@@ -164,11 +184,10 @@ async function fetchHeadlines() {
 async function searchNews() {
   const query = document.getElementById('searchQuery').value.trim();
   if (!query) return showMessage('Enter a keyword', 'error');
-  if (!token) return showMessage('Login to search news.', 'error');
 
   try {
     const res = await fetch(`${BASE_URL}/news/search?q=${encodeURIComponent(query)}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include'
     });
 
     const data = await res.json();
@@ -183,7 +202,7 @@ async function searchNews() {
 async function getHistory() {
   try {
     const res = await fetch(`${BASE_URL}/news/history`, {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include'
     });
 
     const data = await res.json();
