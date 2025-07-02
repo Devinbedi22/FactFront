@@ -52,6 +52,9 @@ function showHistory() {
 }
 
 // ============ INIT ============ //
+let lastSearchQuery = '';
+let clickedArticles = [];
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('loginBtn').addEventListener('click', toggleAuth);
   document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -83,9 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============ AUTH ============ //
 async function updateAuthUI() {
   try {
-    const res = await fetch(`${BASE_URL}/auth/status`, {
-      credentials: 'include'
-    });
+    const res = await fetch(`${BASE_URL}/auth/status`, { credentials: 'include' });
     const data = await res.json();
 
     const isLoggedIn = res.ok && data.loggedIn;
@@ -100,7 +101,6 @@ async function updateAuthUI() {
 async function login() {
   const username = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
-
   if (!username || !password) return showMessage('Enter both fields', 'error');
 
   try {
@@ -127,7 +127,6 @@ async function login() {
 async function signup() {
   const username = document.getElementById('signupEmail').value.trim();
   const password = document.getElementById('signupPassword').value.trim();
-
   if (!username || !password) return showMessage('Enter both fields', 'error');
 
   try {
@@ -193,6 +192,8 @@ async function searchNews() {
     const data = await res.json();
     if (!res.ok) return showMessage(data.error || 'Search failed', 'error');
 
+    lastSearchQuery = query;
+    clickedArticles = [];
     displayArticles(data.articles, 'searchResults');
   } catch (err) {
     showMessage('Search failed.', 'error');
@@ -214,6 +215,27 @@ async function getHistory() {
   }
 }
 
+async function saveSearchWithArticles() {
+  if (!lastSearchQuery || clickedArticles.length === 0) return;
+
+  try {
+    await fetch(`${BASE_URL}/news/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        query: lastSearchQuery,
+        articles: clickedArticles
+      })
+    });
+
+    lastSearchQuery = '';
+    clickedArticles = [];
+  } catch (err) {
+    console.error('Failed to save search with articles:', err);
+  }
+}
+
 // ============ DISPLAY ============ //
 function displayArticles(articles, elementId) {
   const container = document.getElementById(elementId);
@@ -224,16 +246,34 @@ function displayArticles(articles, elementId) {
     return;
   }
 
-  container.innerHTML = articles
-    .map(
-      article => `
-        <div class="article">
-          <h4>${article.title}</h4>
-          <p>${article.description || ''}</p>
-          ${article.url !== '#' ? `<a href="${article.url}" target="_blank">Read more</a>` : ''}
-        </div>`
-    )
-    .join('');
+  container.innerHTML = '';
+  articles.forEach(article => {
+    const articleDiv = document.createElement('div');
+    articleDiv.className = 'article';
+
+    const title = document.createElement('h4');
+    title.textContent = article.title;
+
+    const desc = document.createElement('p');
+    desc.textContent = article.description || '';
+
+    const link = document.createElement('a');
+    link.href = article.url;
+    link.target = '_blank';
+    link.textContent = 'Read more';
+
+    link.addEventListener('click', () => {
+      if (!clickedArticles.some(a => a.url === article.url)) {
+        clickedArticles.push({ title: article.title, url: article.url });
+        saveSearchWithArticles();
+      }
+    });
+
+    articleDiv.appendChild(title);
+    articleDiv.appendChild(desc);
+    articleDiv.appendChild(link);
+    container.appendChild(articleDiv);
+  });
 }
 
 function displayHistory(historyArray) {
@@ -246,15 +286,20 @@ function displayHistory(historyArray) {
   }
 
   container.innerHTML = historyArray
-    .map(
-      item => `
+    .map(item => {
+      const links = item.articles?.length
+        ? '<ul>' + item.articles.map(a => `<li><a href="${a.url}" target="_blank">${a.title}</a></li>`).join('') + '</ul>'
+        : '<small>No articles opened.</small>';
+
+      return `
         <li class="history-card">
           <div>
             <strong>${item.query}</strong><br />
-            <small>${new Date(item.date).toLocaleString()}</small>
+            <small>${new Date(item.date).toLocaleString()}</small><br/>
+            ${links}
           </div>
-        </li>`
-    )
+        </li>`;
+    })
     .join('');
 }
 
