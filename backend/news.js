@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const router = express.Router();
 
-/* ---------- History model ---------- */
+
 const historySchema = new mongoose.Schema({
   userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   query:    { type: String, required: true },
@@ -20,7 +20,7 @@ const historySchema = new mongoose.Schema({
 
 const History = mongoose.model('History', historySchema);
 
-/* ---------- Session Auth Middleware ---------- */
+
 const requireLogin = (req, res, next) => {
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Login required' });
@@ -28,7 +28,7 @@ const requireLogin = (req, res, next) => {
   next();
 };
 
-/* ---------- HEADLINES (cached, no auth) ---------- */
+
 let cache = { ts: 0, articles: [] };
 const ONE_HOUR = 60 * 60 * 1000;
 
@@ -55,8 +55,8 @@ router.get('/headlines', async (req, res, next) => {
   }
 });
 
-/* ---------- SEARCH (requires login) ---------- */
-// GET: Fetch search results from NewsAPI
+
+
 router.get('/search', requireLogin, async (req, res, next) => {
   try {
     const q = req.query.q?.trim();
@@ -72,13 +72,13 @@ router.get('/search', requireLogin, async (req, res, next) => {
       return res.status(raw.status).json({ error: data.message || 'NewsAPI error' });
     }
 
-    res.json(data); // only return articles, do not save in GET
+    res.json(data); 
   } catch (err) {
     next(err);
   }
 });
 
-// POST: Save search with clicked articles
+
 router.post('/search', requireLogin, async (req, res, next) => {
   try {
     const { query, articles } = req.body;
@@ -99,7 +99,7 @@ router.post('/search', requireLogin, async (req, res, next) => {
   }
 });
 
-/* ---------- HISTORY (requires login) ---------- */
+
 router.get('/history', requireLogin, async (req, res, next) => {
   try {
     const history = await History.find({ userId: req.session.userId })

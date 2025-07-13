@@ -1,6 +1,6 @@
 const BASE_URL = 'https://factfront.onrender.com/api';
 
-// ============ MESSAGE BAR ============ //
+ 
 const messageBar = document.createElement('div');
 messageBar.id = 'message-bar';
 messageBar.style.cssText = `
@@ -31,7 +31,7 @@ function showMessage(message, type = 'success') {
   }, 3000);
 }
 
-// ============ UI TOGGLE ============ //
+
 function toggleAuth() {
   document.getElementById('auth-overlay').style.display = 'block';
   document.getElementById('auth-section').style.display = 'block';
@@ -51,7 +51,7 @@ function showHistory() {
   getHistory();
 }
 
-// ============ INIT ============ //
+
 let lastSearchQuery = '';
 let clickedArticles = [];
 
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchHeadlines();
 });
 
-// ============ AUTH ============ //
+
 async function updateAuthUI() {
   try {
     const res = await fetch(`${BASE_URL}/auth/status`, { credentials: 'include' });
@@ -169,7 +169,7 @@ async function logout() {
   }
 }
 
-// ============ NEWS ============ //
+
 async function fetchHeadlines() {
   try {
     const res = await fetch(`${BASE_URL}/news/headlines`);
@@ -236,7 +236,7 @@ async function saveSearchWithArticles() {
   }
 }
 
-// ============ DISPLAY ============ //
+
 function displayArticles(articles, elementId) {
   const container = document.getElementById(elementId);
   if (!container) return;
@@ -329,7 +329,7 @@ function displayCarousel(articles) {
   showSlide(currentSlide);
 }
 
-// ============ CAROUSEL ============ //
+
 let currentSlide = 0;
 let totalSlides = 0;
 
@@ -355,7 +355,7 @@ function prevSlide() {
   showSlide(currentSlide);
 }
 
-// ============ SECTION TOGGLE ============ //
+
 function showSection(sectionId) {
   const sections = document.querySelectorAll('main > section');
   sections.forEach(sec => sec.style.display = 'none');
