@@ -1,4 +1,4 @@
-// backend/auth2.js
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
@@ -6,14 +6,14 @@ require('dotenv').config();
 
 const router = express.Router();
 
-/* ---------- User model ---------- */
+
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, trim: true, minlength: 3 },
   password: { type: String, required: true }
 });
 const User = mongoose.model('User', userSchema);
 
-/* ---------- /signup ---------- */
+
 router.post('/signup', async (req, res, next) => {
   try {
     const { username = '', password = '' } = req.body;
@@ -34,7 +34,7 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-/* ---------- /login ---------- */
+
 router.post('/login', async (req, res, next) => {
   try {
     const { username = '', password = '' } = req.body;
@@ -50,9 +50,9 @@ router.post('/login', async (req, res, next) => {
     if (!isMatch)
       return res.status(401).json({ error: 'Invalid credentials' });
 
-    // ✅ Store user ID in session
+    
     req.session.userId = user._id;
-    console.log('✅ Session after login:', req.session); // 🪵 Debug log
+    console.log('✅ Session after login:', req.session);  
 
     res.json({ message: 'Login successful' });
   } catch (err) {
@@ -60,19 +60,19 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-/* ---------- /logout ---------- */
+ 
 router.post('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) return res.status(500).json({ error: 'Logout failed' });
 
-    res.clearCookie('sid'); // default session cookie name
+    res.clearCookie('sid');  
     res.json({ message: 'Logged out successfully' });
   });
 });
 
-/* ---------- /status ---------- */
+ 
 router.get('/status', (req, res) => {
-  console.log('🔍 Session on /status:', req.session); // 🪵 Debug log
+  console.log('🔍 Session on /status:', req.session);  
   res.json({ loggedIn: !!req.session.userId });
 });
 

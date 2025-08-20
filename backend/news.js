@@ -1,4 +1,3 @@
-// backend/news.js
 const express  = require('express');
 const fetch    = require('node-fetch');
 const mongoose = require('mongoose');
@@ -6,15 +5,22 @@ require('dotenv').config();
 
 const router = express.Router();
 
-/* ---------- History model ---------- */
+
 const historySchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  query : { type: String, required: true },
-  date  : { type: Date, default: Date.now }
+  userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  query:    { type: String, required: true },
+  date:     { type: Date, default: Date.now },
+  articles: [
+    {
+      title: String,
+      url:   String
+    }
+  ]
 });
+
 const History = mongoose.model('History', historySchema);
 
-/* ---------- Session Auth Middleware ---------- */
+
 const requireLogin = (req, res, next) => {
   if (!req.session.userId) {
     return res.status(401).json({ error: 'Login required' });
@@ -22,7 +28,7 @@ const requireLogin = (req, res, next) => {
   next();
 };
 
-/* ---------- HEADLINES (cached, no auth) ---------- */
+
 let cache = { ts: 0, articles: [] };
 const ONE_HOUR = 60 * 60 * 1000;
 
@@ -49,7 +55,8 @@ router.get('/headlines', async (req, res, next) => {
   }
 });
 
-/* ---------- SEARCH (requires login) ---------- */
+
+
 router.get('/search', requireLogin, async (req, res, next) => {
   try {
     const q = req.query.q?.trim();
@@ -65,15 +72,34 @@ router.get('/search', requireLogin, async (req, res, next) => {
       return res.status(raw.status).json({ error: data.message || 'NewsAPI error' });
     }
 
-    await new History({ userId: req.session.userId, query: q }).save();
-
-    res.json(data);
+    res.json(data); 
   } catch (err) {
     next(err);
   }
 });
 
-/* ---------- HISTORY (requires login) ---------- */
+
+router.post('/search', requireLogin, async (req, res, next) => {
+  try {
+    const { query, articles } = req.body;
+
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    await new History({
+      userId: req.session.userId,
+      query,
+      articles: Array.isArray(articles) ? articles : []
+    }).save();
+
+    res.json({ message: 'Search saved with articles' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 router.get('/history', requireLogin, async (req, res, next) => {
   try {
     const history = await History.find({ userId: req.session.userId })

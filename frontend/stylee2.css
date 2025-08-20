@@ -1,4 +1,4 @@
-/* Reset & Base */
+
 * {
   margin: 0;
   padding: 0;
@@ -55,7 +55,7 @@ header {
   background-color: #ddd;
 }
 
-/* Navigation Bar */
+
 nav {
   background-color: #111;
   display: flex;
@@ -80,7 +80,7 @@ nav li:hover {
   color: hotpink;
 }
 
-/* Section Titles */
+
 section h2 {
   text-align: center;
   font-size: 2rem;
@@ -89,7 +89,7 @@ section h2 {
   color: #000;
 }
 
-/* Headlines & Search Results */
+
 #headlines-carousel,
 #searchResults {
   display: grid;
@@ -131,7 +131,7 @@ section h2 {
   text-decoration: underline;
 }
 
-/* Carousel styles */
+
 .carousel {
   position: relative;
   width: 90%;
@@ -187,7 +187,7 @@ section h2 {
   right: 10px;
 }
 
-/* Search Section */
+
 #search-section {
   text-align: center;
   padding: 1rem;
@@ -215,7 +215,7 @@ section h2 {
   background-color: #333;
 }
 
-/* Auth Overlay */
+
 #auth-overlay {
   position: fixed;
   top: 0;
@@ -227,7 +227,7 @@ section h2 {
   display: none;
 }
 
-/* Auth Section */
+
 #auth-section {
   position: fixed;
   top: 50%;
@@ -264,7 +264,7 @@ section h2 {
   color: #555;
 }
 
-/* History Section */
+
 #history-section {
   display: none;
   padding: 20px;
@@ -303,7 +303,7 @@ section h2 {
   cursor: pointer;
 }
 
-/* Message Bar */
+
 #messageBar {
   position: fixed;
   top: 20px;
@@ -327,8 +327,21 @@ section h2 {
   background-color: #2ecc71;
 }
 
-/* Responsive Fixes */
-@media (max-width: 600px) {
+
+@media (max-width: 768px) {
+  .carousel-btn {
+    top: auto;
+    bottom: 10px;
+    transform: none;
+  }
+
+  .carousel-btn.prev {
+    left: 10px;
+  }
+
+  .carousel-btn.next {
+    right: 10px;
+  }
   .top-bar {
     flex-direction: column;
     align-items: flex-start;
@@ -357,4 +370,25 @@ section h2 {
   #auth-section {
     width: 95%;
   }
+  .splide__arrow {
+    top: 40% !important;   
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .splide__arrow--prev {
+    left: -10px !important;
+  }
+
+  .splide__arrow--next {
+    right: -10px !important;
+  }
+
+  .splide {
+    overflow: hidden;
+    position: relative;
+  }
 }
+ 
+  
+
